@@ -1,106 +1,75 @@
 const express = require('express');
 const router = express.Router();
-
-const rolas = [
-    { id: 1, rola: 'rola1' },
-    { id: 2, rola: 'rola2' },
-    { id: 3, rola: 'rola3' },
-    { id: 4, rola: 'rola4' },
-];
+const RolaCollection = require('../models/RolaCollection.js');
 
 // Get ROLAS
-router.get('/', function(req, res) {
-    res.json({ success: true, data: rolas });
+router.get('/', async function(req, res) {
+    try {
+        const rolas = await RolaCollection.find();
+        res.json({ success: true, data: rolas });
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    };
 });
 
 // Get Single ROLA
-router.get('/:id', function(req, res) {
-    let rola;
-    
-    for(let i = 0; i < rolas.length; i++) {
-        if(rolas[i].id === +req.params.id) {
-            rola = rolas[i];
-            break;
-        };
+router.get('/:id', async function(req, res) {
+    try {
+        const rola = await RolaCollection.findById(req.params.id);
+        res.json({ success: true, data: rola });
+    } catch(error) {
+        console.log(error);
+        res.status(400).json({ success: false, error: 'Server error' });
     };
-
-    if(!rola) {
-        return res
-            .status(404)
-            .json({ success: false, error: 'Not found' });
-    };
-    
-    res.json({
-        success: true,
-        data: rola,
-    });
 });
 
 // Add a ROLA
-router.post('/', function(req, res) {
-    const rola = {
-        id: rolas.length + 1,
+router.post('/', async function(req, res) {
+    const rola = new RolaCollection({
         rola: req.body.rola,
+        username: req.body.username,
+    });
+    
+    try {
+        const savedRola = await rola.save();
+        res.json({ success: true, data: savedRola });
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ success: false, error: 'Server error' });
     };
-
-    rolas.push(rola);
-
-    res.json({ success: true, data: rola });
 });
 
 // Update a ROLA
-router.put('/:id', function(req, res) {
-    let rola;
-
-    for(let i = 0; i < rolas.length; i++) {
-        if(rolas[i].id === +req.params.id) {
-            rola = rolas[i];
-            break;
-        };
+router.put('/:id', async function(req, res) {
+    try {
+        const updatedRola = await RolaCollection.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    rola: req.body.rola,
+                }
+            },
+            { new: true }
+        );
+        res.json({ success: true, data: updatedRola });
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ success: false, error: 'Server error' });
     };
-
-    if(!rola) {
-        return res
-            .status(404)
-            .json({ success: false, error: 'Not found' });
-    };
-
-    if(req.body.rola) {
-        rola.rola = req.body.rola;
-    };
-
-    res.json({ success: true, data: rola });
 });
 
 // Delete ROLA
-router.delete('/:id', function(req, res) {
-    let newRolas = [];
-
-    for(let i = 0; i < rolas.length; i++) {
-        if(rolas[i].id === +req.params.id) {
-            continue;
-        };
-
-        newRolas.push(rolas[i]);
+router.delete('/:id', async function(req, res) {
+    try {
+        await RolaCollection.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'deleted' });
+    } catch(error) {
+        console.log(error);
+        res
+            .status(500)
+            .json({ success: false, error: 'Server error' });
     };
-
-    if(rolas.length === newRolas.length) {
-        return (
-            res
-                .status(404)
-                .json({ success: false, error: 'Nothing deleted' })
-        );
-    };
-
-    for(let i = rolas.length - 1; i >= 0; i--) {
-        rolas.pop();
-    };
-
-    for(let i = 0; i < newRolas.length; i++) {
-        rolas.push(newRolas[i]);
-    };
-
-    res.json({ success: true, data: rolas });
 });
 
 module.exports = router;
