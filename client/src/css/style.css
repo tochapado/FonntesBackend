@@ -127,28 +127,16 @@ form label {
   font-size: 14px;
 }
 
-.tag-technology {
-  background: steelblue;
+.tag-rola {
+  background: #f0f;
 }
 
-.tag-software {
+.tag-benga {
   background: coral;
 }
 
-.tag-business {
+.tag-vara {
   background: green;
-}
-
-.tag-education {
-  background: purple;
-}
-
-.tag-health {
-  background: red;
-}
-
-.tag-inventions {
-  background: orange;
 }
 
 .delete {

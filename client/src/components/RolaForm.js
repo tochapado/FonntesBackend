@@ -1,22 +1,30 @@
+import RolasApi from '../services/RolasApi.js';
+import RolaList from './RolaList.js';
+
 class RolaForm {
     constructor() {
         this._formModal = document.querySelector('#form-modal');
+        this._rolaList = new RolaList();
     };
 
     addEventListeners() {
         this._form.addEventListener('submit', this.handleSubmit.bind(this));
     };
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
 
         const rola = {
             rola: this._form.elements.rola.value,
             tag: this._form.elements.tag.value,
             username: this._form.elements.username.value,
-        }
+        };
 
-        console.log(rola);
+        // Add rola to server
+        const newRola = await RolasApi.createRola(rola);
+
+        // Add rola to frontend
+        this._rolaList.addRolaToList(newRola.data.data);
 
         // Clear Fields
         this._form.elements.rola.value = '';

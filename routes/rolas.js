@@ -29,6 +29,7 @@ router.post('/', async function(req, res) {
     const rola = new RolaCollection({
         rola: req.body.rola,
         username: req.body.username,
+        tag: req.body.tag,
     });
     
     try {
