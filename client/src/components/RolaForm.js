@@ -24,7 +24,7 @@ class RolaForm {
         const newRola = await RolasApi.createRola(rola);
 
         // Add rola to frontend
-        this._rolaList.addRolaToList(newRola.data.data);
+        this._rolaList.addRolaToList(newRola);
 
         // Clear Fields
         this._form.elements.rola.value = '';

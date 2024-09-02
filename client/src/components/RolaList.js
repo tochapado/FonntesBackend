@@ -15,8 +15,9 @@ class RolaList {
 
     async getRolas() {
         try {
-            const res = await RolasApi.getRolas();
-            this._rolas = res.data.data;
+            const data = await RolasApi.getRolas();
+
+            this._rolas = data;
             this.render();
         } catch(error) {
             console.log(error);
