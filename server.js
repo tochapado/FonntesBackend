@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 require('dotenv').config();
 const port = process.env.PORT || 6969;
@@ -6,6 +7,9 @@ const connectDB = require('./config/db.js');
 connectDB();
 
 const app = express();
+
+// Static Folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 const rolaRouter = require('./routes/rolas.js');
 

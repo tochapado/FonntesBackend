@@ -9,6 +9,10 @@ const RolaCollectionSchema = new mongoose.Schema({
         type: String,
         required: [true, 'No user found'],
     },
+    tag: {
+        type: String,
+        required: [true, 'Please add a tag']
+    },
     date: {
         type: String,
         default: Date.now,
