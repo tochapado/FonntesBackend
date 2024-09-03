@@ -44,16 +44,32 @@ router.post('/', async function(req, res) {
 // Update a ROLA
 router.put('/:id', async function(req, res) {
     try {
-        const updatedRola = await RolaCollection.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: {
-                    rola: req.body.rola,
-                }
-            },
-            { new: true }
-        );
-        res.json({ success: true, data: updatedRola });
+        const rola = await RolaCollection.findById(req.params.id);
+
+        // Match the usernames
+        if(rola.username === req.body.username) {
+            const updatedRola = await RolaCollection.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        rola: req.body.rola,
+                        tag: req.body.tag,
+                    },
+                },
+                { new: true }
+            );
+            return res.json({
+                success: true,
+                data: updatedRola,
+            });
+        };
+
+        // Usernames dont match
+        res.status(403).json({
+            success: false,
+            error: 'Not authorized',
+        });
+
     } catch(error) {
         console.log(error);
         res.status(500).json({ success: false, error: 'Server error' });
@@ -63,8 +79,20 @@ router.put('/:id', async function(req, res) {
 // Delete ROLA
 router.delete('/:id', async function(req, res) {
     try {
-        await RolaCollection.findByIdAndDelete(req.params.id);
-        res.json({ success: true, message: 'deleted' });
+        const rola = await RolaCollection.findById(req.params.id);
+
+        // Match the usernames
+        if(rola.username === req.body.username) {
+            await RolaCollection.findByIdAndDelete(req.params.id);
+            return res.json({ success: true, message: 'deleted' });
+        };
+
+        // Usenames dont match
+        res.status(403).json({
+            success: false,
+            error: 'Not authorized',
+        });
+
     } catch(error) {
         console.log(error);
         res

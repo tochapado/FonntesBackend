@@ -11,6 +11,11 @@ class RolaList {
         this._validTags.add('rola');
         this._validTags.add('benga');
         this._validTags.add('vara');
+
+    };
+
+    addEventListeners() {
+        this._rolaListEl.addEventListener('click', this.handleDeleteClick.bind(this));
     };
 
     async getRolas() {
@@ -21,6 +26,25 @@ class RolaList {
             this.render();
         } catch(error) {
             console.log(error);
+        };
+    };
+
+    async deleteRola(rolaId) {
+        let newRolas = [rolaId];
+        try {
+            // Delete from server
+            const res = await RolasApi.deleteRola(rolaId);
+
+            for(let i = 0; i < this._rolas.length; i++) {
+                if(this._rolas[i] !== rolaId) {
+                    newRolas.push(this._rolas[i]);
+                };
+            };
+
+            this._rolas = newRolas;
+            this.getRolas();
+        } catch(error) {
+            alert('You cant delete this one');
         };
     };
 
@@ -43,6 +67,15 @@ class RolaList {
         return tagClass;
     };
 
+    handleDeleteClick(e) {
+        if(e.target.classList.contains('fa-times')) {
+            e.stopImmediatePropagation();
+            const rolaId = e.target.parentElement.parentElement.dataset.id;
+            
+            this.deleteRola(rolaId);
+        };
+    };
+
     render() {
         let html = '';
 
@@ -50,12 +83,15 @@ class RolaList {
             const rola = this._rolas[i];
             const tagClass = this.getTagClass(rola.tag);
 
+            let deleteBtn = '';
+            if(rola.username === localStorage.getItem('username')) {
+                deleteBtn = '<button class="delete"><i class="fas fa-times"></i></button>'
+            };
 
             html = html + `
-                <div class="card">
-                    <button class="delete"><i class="fas fa-times"></i></button>
-                    <h3>${rola.rola}
-                    </h3>
+                <div class="card" data-id="${rola._id}">
+                    ${deleteBtn}
+                    <h3>${rola.rola}</h3>
                     <p class="tag ${tagClass}">${rola.tag.toUpperCase()}</p>
                     <p>
                         Posted on <span class="date">${rola.date}</span> by
@@ -65,6 +101,8 @@ class RolaList {
             `;
         };
         this._rolaListEl.innerHTML = html;
+
+        this.addEventListeners();
     };
 };
 

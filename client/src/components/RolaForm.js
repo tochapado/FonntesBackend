@@ -14,6 +14,9 @@ class RolaForm {
     async handleSubmit(e) {
         e.preventDefault();
 
+        // Save user to local storage
+        localStorage.setItem('username', this._form.elements.username.value);
+
         const rola = {
             rola: this._form.elements.rola.value,
             tag: this._form.elements.tag.value,
@@ -31,6 +34,8 @@ class RolaForm {
         this._form.elements.tag.value = '';
         this._form.elements.username.value = '';
 
+        this.render();
+
         document.dispatchEvent(new Event('closemodal'));
     };
 
@@ -39,15 +44,21 @@ class RolaForm {
             <form id="rola-form">
             <div class="form-control">
                 <label for="username">Enter a Username</label>
-                <input type="text" name="username" id="username" />
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    required
+                    value="${localStorage.getItem('username') ? localStorage.getItem('username') : ''}"
+                />
             </div>
             <div class="form-control">
                 <label for="rola-text">What's Your Idea?</label>
-                <textarea name="rola" id="rola-text"></textarea>
+                <textarea name="rola" id="rola-text" required></textarea>
             </div>
             <div class="form-control">
                 <label for="tag">Tag</label>
-                <input type="text" name="tag" id="tag" />
+                <input type="text" name="tag" id="tag" required />
             </div>
             <button class="btn" type="submit" id="submit">Submit</button>
             </form>
